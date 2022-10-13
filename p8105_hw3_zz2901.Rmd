@@ -20,9 +20,12 @@ This problem uses five weeks of accelerometer data collected on a 63 year-old ma
 ```{r}
 accel_data <- read.csv("data/accel_data.csv") %>% 
   janitor::clean_names() %>% 
-  mutate(weekday_vs_weekend = if_else(day=="Saturday"|day=="Sunday",1,2,missing=99),
+  mutate(real_day_id=day_id-(week-1)*7,
+    day = recode(real_day_id,`1`="Monday",`2`="Tuesday",`3`="Wednesday",
+                 `4`="Thursday",`5`="Friday",`6`="Saturday",`7`="Sunday"),
+        weekday_vs_weekend = if_else(day=="Saturday"|day=="Sunday",1,2,missing=99),
          weekday_vs_weekend = recode(weekday_vs_weekend,`1`="Weekend",`2`="Weekday")) %>% 
-  select(1,2,3,weekday_vs_weekend,everything())
+  select(1,2,3,weekday_vs_weekend,everything(),-real_day_id)
 
 accel_data[1:5,1:5]
 ```
@@ -33,20 +36,53 @@ accel_data[1:5,1:5]
 
   * `accel_data` was imported from the `csv` file `accel_data.csv` with a dimension of ``r nrow(accel_data)`` observations and ``r ncol(accel_data)-1`` variables. After adding the `weekday_vs_weekend` variable, there are ``r ncol(accel_data)`` variables. 
   
+  * the `day` variable might have been labeled wrongly. It was corrected based on `day_id`.
+  
   * `chr` variables `day` and `weekday_vs_weekend`, and `num` variables `week`, `day_id`, and `activity_*` are present in the dataset after tidying. 
 
 </span>
 
 * Traditional analyses of accelerometer data focus on the total activity over the day. Using your tidied dataset, aggregate across minutes to create a total activity variable for each day, and create a table showing these totals. Are any trends apparent?
 
+```{r}
+accel_aggregate <- accel_data %>% 
+  pivot_longer(5:ncol(accel_data),values_to = "total_activity") %>% 
+  group_by(day_id) %>% 
+  mutate(total_activity=sum(total_activity)) %>% 
+  distinct(day_id,.keep_all=TRUE) %>% 
+  select(everything(),-name)
+
+table_prob1 <- accel_aggregate%>% 
+  knitr::kable(digits = 3)
+```
+
 <span style="color:#36648B;font-weight:700">
+
+* This table shows the aggregated `activity.*` for each `day`.
+
+  * Table: `r table_prob1` The trends are really hard to see from a table. But we do notice there was almost always one day a week that he had significantly lower total activity compared to the rest of the week.
 
 </span>
 
 * Accelerometer data allows the inspection activity over the course of the day. Make a single-panel plot that shows the 24-hour activity time courses for each day and use color to indicate day of the week. Describe in words any patterns or conclusions you can make based on this graph.
 
+```{r}
+accel_aggregate %>%
+  ggplot(aes(x = day_id, y = total_activity)) + 
+    geom_point(aes( color = day)) + geom_smooth(alpha=0.3)+
+    theme(legend.position = "bottom")+
+    labs(
+    title = "Q1. 24-hour activity time courses for each day",
+    x = "Day of Data Collection",
+    y = "24-hour Total Activity")
+```
+
 <span style="color:#36648B;font-weight:700">
 
+* description and conclusion:
+
+  * From the scatterplot and trend lind created by `geom_point()` and `geom_smooth()`, we can observe that the subject's total activity fluctuates greatly throughout the 35 days and also days fo each week. He seems to have a period with higher activity after one with lower activity and vice versa from the graph. 
+  
 </span>
 
 ## Problem 3
