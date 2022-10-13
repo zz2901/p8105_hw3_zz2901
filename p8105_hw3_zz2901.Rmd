@@ -6,20 +6,48 @@ output: github_document
 
 ```{r load_package, echo = FALSE, message=FALSE}
 library(tidyverse)
-options(tibble.print_min = 5)
+options(tibble.print_max = 5)
 ```
 
 ## Problem 2
 
 Accelerometers have become an appealing alternative to self-report techniques for studying physical activity in observational studies and clinical trials, largely because of their relative objectivity. During observation periods, the devices measure “activity counts” in a short period; one-minute intervals are common. Because accelerometers can be worn comfortably and unobtrusively, they produce around-the-clock observations.
 
-This problem uses five weeks of accelerometer data collected on a 63 year-old male with BMI 25, who was admitted to the Advanced Cardiac Care Center of Columbia University Medical Center and diagnosed with congestive heart failure (CHF). The data can be downloaded here. In this spreadsheet, variables activity.* are the activity counts for each minute of a 24-hour day starting at midnight.
+This problem uses five weeks of accelerometer data collected on a 63 year-old male with BMI 25, who was admitted to the Advanced Cardiac Care Center of Columbia University Medical Center and diagnosed with congestive heart failure (CHF). The data can be downloaded here. **In this spreadsheet, variables `activity.*` are the activity counts for each minute of a 24-hour day starting at midnight.**
 
 * Load, tidy, and otherwise wrangle the data. Your final dataset should include all originally observed variables and values; have useful variable names; include a weekday vs weekend variable; and encode data with reasonable variable classes. Describe the resulting dataset (e.g. what variables exist, how many observations, etc).
 
+```{r}
+accel_data <- read.csv("data/accel_data.csv") %>% 
+  janitor::clean_names() %>% 
+  mutate(weekday_vs_weekend = if_else(day=="Saturday"|day=="Sunday",1,2,missing=99),
+         weekday_vs_weekend = recode(weekday_vs_weekend,`1`="Weekend",`2`="Weekday")) %>% 
+  select(1,2,3,weekday_vs_weekend,everything())
+
+accel_data[1:5,1:5]
+```
+
+<span style="color:#36648B;font-weight:700">
+
+* Description of `accel_data`
+
+  * `accel_data` was imported from the `csv` file `accel_data.csv` with a dimension of ``r nrow(accel_data)`` observations and ``r ncol(accel_data)-1`` variables. After adding the `weekday_vs_weekend` variable, there are ``r ncol(accel_data)`` variables. 
+  
+  * `chr` variables `day` and `weekday_vs_weekend`, and `num` variables `week`, `day_id`, and `activity_*` are present in the dataset after tidying. 
+
+</span>
+
 * Traditional analyses of accelerometer data focus on the total activity over the day. Using your tidied dataset, aggregate across minutes to create a total activity variable for each day, and create a table showing these totals. Are any trends apparent?
 
+<span style="color:#36648B;font-weight:700">
+
+</span>
+
 * Accelerometer data allows the inspection activity over the course of the day. Make a single-panel plot that shows the 24-hour activity time courses for each day and use color to indicate day of the week. Describe in words any patterns or conclusions you can make based on this graph.
+
+<span style="color:#36648B;font-weight:700">
+
+</span>
 
 ## Problem 3
 
@@ -27,9 +55,20 @@ The goal is to do some exploration of this dataset. To that end, write a short d
 
 * Do some data cleaning. Create separate variables for year, month, and day. Ensure observations for temperature, precipitation, and snowfall are given in reasonable units. For snowfall, what are the most commonly observed values? Why?
 
+<span style="color:#36648B;font-weight:700">
+
+</span>
+
 * Make a two-panel plot showing the average max temperature in January and in July in each station across years. Is there any observable / interpretable structure? Any outliers?
+
+<span style="color:#36648B;font-weight:700">
+
+</span>
 
 * Make a two-panel plot showing (i) tmax vs tmin for the full dataset (note that a scatterplot may not be the best option); and (ii) make a plot showing the distribution of snowfall values greater than 0 and less than 100 separately by year.
 
+<span style="color:#36648B;font-weight:700">
+
+</span>
 
 
