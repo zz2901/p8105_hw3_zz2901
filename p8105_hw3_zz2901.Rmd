@@ -70,6 +70,7 @@ table_prob1 <- accel_aggregate%>%
 accel_aggregate %>%
   ggplot(aes(x = day_id, y = total_activity)) + 
     geom_point(aes( color = day)) + geom_smooth(alpha=0.3)+
+    geom_line(aes(color=day),alpha=.3)+
     theme(legend.position = "bottom")+
     labs(
     title = "Q1. 24-hour activity time courses for each day",
@@ -81,7 +82,7 @@ accel_aggregate %>%
 
 * description and conclusion:
 
-  * From the scatterplot and trend lind created by `geom_point()` and `geom_smooth()`, we can observe that the subject's total activity fluctuates greatly throughout the 35 days and also days fo each week. He seems to have a period with higher activity after one with lower activity and vice versa from the graph. 
+  * From the scatterplot and trend lind created by `geom_point()` and `geom_smooth()`, we can observe that the subject's total activity fluctuates greatly throughout the 35 days and also days fo each week. He seems to have a period with higher activity after one with lower activity and vice versa from the graph. The trends of activity for day of the week follow the general trends as shown by the lines created from `geom_line()`.
   
 </span>
 
