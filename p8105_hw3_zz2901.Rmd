@@ -99,11 +99,11 @@ This problem uses five weeks of accelerometer data collected on a 63 year-old ma
 accel_data <- read.csv("data/accel_data.csv") %>% 
   janitor::clean_names() %>% 
   mutate(real_day_id=day_id-(week-1)*7,
-    day = recode(real_day_id,`1`="Monday",`2`="Tuesday",`3`="Wednesday",
-                 `4`="Thursday",`5`="Friday",`6`="Saturday",`7`="Sunday"),
-        weekday_vs_weekend = if_else(day=="Saturday"|day=="Sunday",1,2,missing=99),
-         weekday_vs_weekend = recode(weekday_vs_weekend,`1`="Weekend",`2`="Weekday")) %>% 
-  select(1,2,3,weekday_vs_weekend,everything(),-real_day_id)
+    day = recode(real_day_id, `1` = "Monday", `2` = "Tuesday", `3` = "Wednesday",
+                 `4` = "Thursday", `5` = "Friday", `6` = "Saturday", `7` = "Sunday"),
+        weekday_vs_weekend = if_else(day == "Saturday"|day == "Sunday", 1, 2, missing = 99),
+         weekday_vs_weekend = recode(weekday_vs_weekend, `1` = "Weekend", `2` = "Weekday")) %>% 
+  select(1, 2, 3, weekday_vs_weekend, everything(), -real_day_id)
 
 accel_data[1:5,1:5]
 ```
@@ -147,9 +147,9 @@ table_prob1 <- accel_aggregate%>%
 ```{r accel_graph}
 accel_aggregate %>%
   ggplot(aes(x = day_id, y = total_activity)) + 
-    geom_point(aes( color = day)) + geom_smooth(alpha=0.3)+
-    geom_line(aes(color=day),alpha=.3)+
-    theme(legend.position = "bottom")+
+    geom_point(aes( color = day)) + geom_smooth(alpha=0.3) +
+    geom_line(aes(color=day),alpha=.3) +
+    theme(legend.position = "bottom") +
     labs(
     title = "Q2. 24-hour activity time courses for each day",
     x = "Day of Data Collection",
@@ -204,15 +204,16 @@ str(ny_noaa)
 
 ```{r noaa_clean_hist}
 noaa_clean <- ny_noaa %>% 
-  separate(date,sep="-",into=c("year","month","day")) %>% 
+  separate(date, sep="-", into = c("year","month","day")) %>% 
   mutate(
-        year=as.numeric(year),month=as.numeric(month),day=as.numeric(day),
+        year = as.numeric(year), month = as.numeric(month), day = as.numeric(day),
         prcp = as.integer(round(prcp*.1*0.03937008)),
         snow = as.integer(round(snow*0.03937008)),
         snwd = as.integer(round(snwd*0.03937008)),
         tmax = as.integer(round(as.numeric(tmax)*.1*1.8+32)),
         tmin = as.integer(round(as.numeric(tmin)*.1*1.8+32))
          )
+
 str(noaa_clean)
 
 snowfall_hist <- noaa_clean %>%
@@ -245,16 +246,16 @@ snowfall_hist
 
 ```{r two_panel}
 noaa_avg <- noaa_clean %>% 
-  filter((month == 01 | month==07) & !is.na(tmax)) %>% 
+  filter((month == 1 | month == 7) & !is.na(tmax)) %>% 
   group_by(id,year,month) %>% 
-  summarise(avg_tmax=mean(tmax),.groups = "keep") %>% 
-  mutate(month=recode(month,`1`="January",`7`="July"),
-         avg_tmax=round(avg_tmax))
+  summarise(avg_tmax = mean(tmax), .groups = "keep") %>% 
+  mutate(month = recode(month,`1` = "January", `7` = "July"),
+         avg_tmax = round(avg_tmax))
 
   
-  ggplot(data=noaa_avg) +
-    geom_line(aes(x=year,y=avg_tmax,color=id),show.legend = FALSE,alpha=.3)+
-    geom_smooth(aes(x=year,y=avg_tmax),color="black",show.legend = FALSE)+
+  ggplot(data = noaa_avg) +
+    geom_line(aes(x = year,y = avg_tmax,color=id),show.legend = FALSE,alpha=.3)+
+    geom_smooth(aes(x = year,y = avg_tmax),color="black",show.legend = FALSE)+
     facet_grid(~month)+
     labs(
     title = "Q3b. histogam for snowfall values",
@@ -283,7 +284,7 @@ noaa_avg <- noaa_clean %>%
  t_vs <- noaa_clean %>% pivot_longer(cols=c("tmax","tmin"),names_to = "tcat",values_to = "temp") %>% 
   ggplot(aes(x = temp)) +
   geom_density(aes(fill = tcat), color = "blue", alpha = .5,na.rm = TRUE)+
-    labs(fill='',
+    labs(fill = '',
     title = "Q3c. (i) tmax vs tmin",
     x = "Temperature (degree F)",
     y = "Density")
@@ -293,10 +294,10 @@ noaa_avg <- noaa_clean %>%
     filter(snow>0 & snow<100) %>% 
     separate(date,sep="-",into=c("year","month","day")) %>% 
     mutate(
-        year=as.factor(year),month=as.numeric(month),day=as.numeric(day)
+        year = as.factor(year),month = as.numeric(month),day = as.numeric(day)
          ) %>% 
-    ggplot(aes(x=year,y=snow))+
-    geom_violin(aes(fill=year),color="blue",show.legend = FALSE)+theme(axis.text.x = element_text(angle = -75)) +
+    ggplot(aes(x = year,y = snow))+
+    geom_violin(aes(fill = year),color="blue",show.legend = FALSE)+theme(axis.text.x = element_text(angle = -75)) +
       labs(
     title = "Q3c. (ii) distribution of snowfall (0~100 mm) separated by year",
     x = "Year",
