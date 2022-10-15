@@ -88,16 +88,51 @@ accel_aggregate %>%
 
 ## Problem 3
 
-The goal is to do some exploration of this dataset. To that end, write a short description of the dataset, noting the size and structure of the data, describing some key variables, and indicating the extent to which missing data is an issue. Then, do or answer the following (commenting on the results of each):
+```{r echo = FALSE, message=FALSE}
+library(p8105.datasets)
+data("ny_noaa")
+```
 
-* Do some data cleaning. Create separate variables for year, month, and day. Ensure observations for temperature, precipitation, and snowfall are given in reasonable units. For snowfall, what are the most commonly observed values? Why?
+The goal is to do some exploration of this dataset. To that end, write a short description of the dataset, noting the size and structure of the data, describing some key variables, and indicating the extent to which missing data is an issue.
+
+```{r}
+ny_noaa
+```
+
 
 <span style="color:#36648B;font-weight:700">
 
+* The `ny_noaa` has `r nrow(ny_noaa)` observations and `r ncol(ny_noaa)` variables. The variables are `id`, `date`, `prcp`, `snow`, `snwd`, `tmax`, and `tmin`, and variable types `chr`, `date`, `int`,  `int`,  `int`, and  `int` correspondingly. 
+
+* We noticed that there are many missing data for the last five numeric measures. 
+
+  * `prcp`: `r sum(is.na(ny_noaa$prcp))` missing obs.
+  
+  * `snow`: `r sum(is.na(ny_noaa$snow))` missing obs.
+  
+  * `snwd`: `r sum(is.na(ny_noaa$snwd))` missing obs.
+  
+  * `tmax`: `r sum(is.na(ny_noaa$tmax))` missing obs.
+  
+  * `tmin`: `r sum(is.na(ny_noaa$tmin))` missing obs.
+  
+  * And many of the missing observations overlap. 
+
 </span>
 
-* Make a two-panel plot showing the average max temperature in January and in July in each station across years. Is there any observable / interpretable structure? Any outliers?
+Then, do or answer the following (commenting on the results of each):
 
+* Do some data cleaning. Create separate variables for year, month, and day. Ensure observations for temperature, precipitation, and snowfall are given in reasonable units. For snowfall, what are the most commonly observed values? Why?
+```{r}
+test <- ny_noaa %>% 
+  separate(date,into=c('year', 'month', 'day'), sep='-')
+```
+  <span style="color:#36648B;font-weight:700">
+  * yes
+
+  </span>
+
+* Make a two-panel plot showing the average max temperature in January and in July in each station across years. Is there any observable / interpretable structure? Any outliers?
 <span style="color:#36648B;font-weight:700">
 
 </span>
